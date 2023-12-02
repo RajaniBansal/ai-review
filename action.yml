@@ -54,7 +54,7 @@ runs:
       shell: bash
       env:
         OPENAI_API_KEY: ${{ inputs.openai-key }}
-        MODEL_NAME: ${{ inputs.model }}
+        MODEL_NAME: ${{ inputs.model-name }}
         PROMPT: ${{ inputs.prompt }}
         MAX_LENGTH: ${{ inputs.max-length }}
         GITHUB_TOKEN: ${{ inputs.github-token }}
