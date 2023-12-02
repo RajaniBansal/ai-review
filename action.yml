@@ -1,72 +1,65 @@
-# action.yaml
-name: 'OpenAI Code review Github Action'
-description: 'A Github Action that posts code review from OpenAI to pull request'
+name: ai-enabled-pr-review
+authir: Suneet Bansal
+description: This will be a github action which would review PR changes and push comments
 inputs:
   github-token:
-    description: 'The token used to authenticate with the GitHub API'
+    description: Github token for authentication
     required: false
-    default: ${{ github.token }} #${{ secrets.GITHUB_TOKEN }}
-  model:
-    description: 'The OpenAI language model to use for code review'
-    required: false
-    default: 'gpt-3.5-turbo'
+    default: ${{github.token}}
   openai-key:
-    description: 'The OpenAI API key'
+    description: Token of Open AI account
     required: true
+    default: OpenAIToken
+  model-name:
+    description: Generative AI model name
+    required: false
+    default: gpt-3.5-turbo
   prompt:
-    description: 'The prompt to use for the analysis.'
+    descrption: You can provide the prompt what kind of analysis you required from Generatibe AI model
     required: false
     default: |
-      Please review the code change below and provide feedback.
-  post-if-error:
-    description: 'Whether to post a comment if there was an error'
-    required: false
-    default: 'true'
+      Please review the code and share your feedbacks.
   max-length:
     description: 'Maximum number of characters to submit to OpenAI'
     required: false
-    default: 1000
-
+    default: 4000
 outputs:
   results:
     description: 'The results of the code review'
-    value: ${{ steps.openai.outputs.reviewresult }}
-
+    value: ${{ steps.pr-review.outputs.openaireviewresult }}
 runs:
   using: 'composite'
   steps:
-
-    - name: Checkout
+    - name: Checkout code
       uses: actions/checkout@v2
       with:
         fetch-depth: 2
-
-    - name: Install Python
+        
+    - name: Prepare python
       uses: actions/setup-python@v4
       with:
         python-version: '3.10'
-
-    - name: Install Dependencies
+      
+    - name: Install python dependencies
       run: pip install -r ${{ github.action_path }}/requirements.txt
       shell: bash
-
-    - name: Run OpenAI code review
-      id: openai
-      run: |
-        git diff ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} | python ${{ github.action_path }}/main.py > review.txt
-        echo 'reviewresult<<EOF' >> $GITHUB_OUTPUT
-        echo "$(cat review.txt)" >> $GITHUB_OUTPUT
-        echo 'EOF' >> $GITHUB_OUTPUT
+      
+    - name: Print PR diff
+      id: pr-review
+      run: git diff ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} | python ${{ github.action_path }}/main.py > review.txt
+           echo 'openaireviewresult<<EOF' >> $GITHUB_OUTPUT
+           echo "$(cat review.txt)" >> $GITHUB_OUTPUT
+           echo 'EOF' >> $GITHUB_OUTPUT
       shell: bash
       env:
-        OPENAI_API_KEY: ${{ inputs.openai-key }}
-        MODEL: ${{ inputs.model }}
-        PROMPT: ${{ inputs.prompt }}
-        MAX_LENGTH: ${{ inputs.max-length }}
         GITHUB_TOKEN: ${{ inputs.github-token }}
+        OPENAI_API_KEY: ${{ inputs.openai-key }}
         COMMIT_TITLE: ${{ github.event.pull_request.title }}
         COMMIT_BODY: ${{ github.event.pull_request.body }}
-
+        MODEL_NAME: ${{ inputs.model-name }}
+        PROMPT: ${{ inputs.prompt }}
+        MAX_LENGTH: ${{ inputs.max-length }}
+        
     - name: Show output in case of failure
       id: err-output
       if: failure()
@@ -76,16 +69,15 @@ runs:
         echo 'EOF' >> $GITHUB_OUTPUT
         echo "Review result and error: $(cat review.txt)"
       shell: bash
-
-    - name: Create comment
+      
+    - name: Push comment
       if: success() || (inputs.post-if-error && inputs.post-if-error != 'false')
       uses: peter-evans/create-or-update-comment@v3
       with:
         issue-number: ${{ github.event.pull_request.number }}
         body: |
-          ${{ steps.openai.outputs.reviewresult && steps.openai.outputs.reviewresult || steps.err-output.outputs.errorresult }}
+          ${{ steps.pr-review.outputs.openaireviewresult && steps.pr-review.outputs.openaireviewresult || steps.err-output.outputs.errorresult }}
         reactions: '+1'
+      
 
-branding:
-  icon: 'user-check'
-  color: 'green'
+
