@@ -29,9 +29,6 @@ kwargs = {'model': model_engine}
 kwargs['temperature'] = 0.5
 kwargs['max_tokens'] = 1024
 kwargs['messages'] = [
-    {"role": "system",
-     "content": "You are a helpful assistant and code reviewer."},
-    {"role": "assistant", "content": "You are code reviewer for a project."},
     {"role": "user", "content": prompt},
 ]
 try:
