@@ -1,3 +1,4 @@
+
 import os
 import openai
 import sys
@@ -9,7 +10,7 @@ if not os.environ.get("OPENAI_API_KEY"):
 
 client = openai.OpenAI()
 
-model_engine = os.environ["MODEL_NAME"]
+model_engine = os.environ["MODEL"]
 commit_title = os.environ["COMMIT_TITLE"]
 commit_message = os.environ["COMMIT_BODY"]
 max_length = int(os.environ["MAX_LENGTH"])
