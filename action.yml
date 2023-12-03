@@ -1,23 +1,17 @@
-# action.yaml
-name: 'OpenAI Code review Github Action'
-description: 'A Github Action that posts code review from OpenAI to pull request'
+name: 'AI enabled PR review action'
+description: 'This Github action will incercept the PR diff and provide AI generated feedbacks as comments'
 inputs:
-  github-token:
-    description: 'The token used to authenticate with the GitHub API'
+  github-access-token:
+    description: 'This token will be use to authenicate Github APIs'
     required: false
-    default: ${{ github.token }} #${{ secrets.GITHUB_TOKEN }}
-  model:
-    description: 'The OpenAI language model to use for code review'
-    required: false
-    default: 'gpt-3.5-turbo'
+    default: ${{ github.token }}
   openai-key:
     description: 'The OpenAI API key'
     required: true
   prompt:
-    description: 'The prompt to use for the analysis.'
+    description: 'Pormpt will use to tell AI model what feedbacks needed for privided code'
     required: false
-    default: |
-      Please review the code change below and provide feedback.
+    default: Please reivew the code and provide your feedbacks.
   post-if-error:
     description: 'Whether to post a comment if there was an error'
     required: false
@@ -26,10 +20,14 @@ inputs:
     description: 'Maximum number of characters to submit to OpenAI'
     required: false
     default: 1000
+  model-name:
+    description: 'Open AI generative AI model name'
+    required: false
+    default: 'gpt-3.5-turbo'
 
 outputs:
   results:
-    description: 'The results of the code review'
+    description: 'PR Review result'
     value: ${{ steps.openai.outputs.reviewresult }}
 
 runs:
@@ -60,14 +58,14 @@ runs:
       shell: bash
       env:
         OPENAI_API_KEY: ${{ inputs.openai-key }}
-        MODEL: ${{ inputs.model }}
+        GITHUB_TOKEN: ${{ inputs.github-access-token }}
+        MODEL: ${{ inputs.model-name }}
         PROMPT: ${{ inputs.prompt }}
         MAX_LENGTH: ${{ inputs.max-length }}
-        GITHUB_TOKEN: ${{ inputs.github-token }}
         COMMIT_TITLE: ${{ github.event.pull_request.title }}
         COMMIT_BODY: ${{ github.event.pull_request.body }}
 
-    - name: Show output in case of failure
+    - name: Show error result
       id: err-output
       if: failure()
       run: |
