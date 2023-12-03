@@ -57,8 +57,6 @@ runs:
         GITHUB_TOKEN: ${{ inputs.github-access-token }}
         MODEL: ${{ inputs.model-name }}
         PROMPT: ${{ inputs.prompt }}
-        COMMIT_TITLE: ${{ github.event.pull_request.title }}
-        COMMIT_BODY: ${{ github.event.pull_request.body }}
 
     - name: Show error result
       id: err-output
