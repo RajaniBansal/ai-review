@@ -24,7 +24,7 @@ inputs:
 outputs:
   results:
     description: 'PR Review result'
-    value: ${{ steps.openai.outputs.reviewresult }}
+    value: ${{ steps.pr-review.outputs.reviewresult }}
 
 runs:
   using: 'composite'
@@ -45,7 +45,7 @@ runs:
       shell: bash
 
     - name: Run OpenAI code review
-      id: openai
+      id: pr-review
       run: |
         git diff ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} | python ${{ github.action_path }}/main.py > review.txt
         echo 'reviewresult<<EOF' >> $GITHUB_OUTPUT
@@ -76,5 +76,5 @@ runs:
       with:
         issue-number: ${{ github.event.pull_request.number }}
         body: |
-          ${{ steps.openai.outputs.reviewresult && steps.openai.outputs.reviewresult || steps.err-output.outputs.errorresult }}
+          ${{ steps.pr-review.outputs.reviewresult && steps.pr-review.outputs.reviewresult || steps.err-output.outputs.errorresult }}
         reactions: '+2'
