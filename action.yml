@@ -16,10 +16,6 @@ inputs:
     description: 'Whether to post a comment if there was an error'
     required: false
     default: 'true'
-  max-length:
-    description: 'Maximum number of characters to submit to OpenAI'
-    required: false
-    default: 1000
   model-name:
     description: 'Open AI generative AI model name'
     required: false
@@ -61,7 +57,6 @@ runs:
         GITHUB_TOKEN: ${{ inputs.github-access-token }}
         MODEL: ${{ inputs.model-name }}
         PROMPT: ${{ inputs.prompt }}
-        MAX_LENGTH: ${{ inputs.max-length }}
         COMMIT_TITLE: ${{ github.event.pull_request.title }}
         COMMIT_BODY: ${{ github.event.pull_request.body }}
 
