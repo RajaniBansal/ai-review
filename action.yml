@@ -47,9 +47,9 @@ runs:
     - name: Run OpenAI code review
       id: pr-review
       run: |
-        git diff ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} | python ${{ github.action_path }}/main.py > review.txt
+        git diff ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} | python ${{ github.action_path }}/main.py > result.txt
         echo 'reviewresult<<EOF' >> $GITHUB_OUTPUT
-        echo "$(cat review.txt)" >> $GITHUB_OUTPUT
+        echo "$(cat result.txt)" >> $GITHUB_OUTPUT
         echo 'EOF' >> $GITHUB_OUTPUT
       shell: bash
       env:
@@ -65,9 +65,9 @@ runs:
       if: failure()
       run: |
         echo 'errorresult<<EOF' >> $GITHUB_OUTPUT
-        echo "ERROR: $(cat review.txt)" >> $GITHUB_OUTPUT
+        echo "ERROR: $(cat result.txt)" >> $GITHUB_OUTPUT
         echo 'EOF' >> $GITHUB_OUTPUT
-        echo "Review result and error: $(cat review.txt)"
+        echo "Review result and error: $(cat result.txt)"
       shell: bash
 
     - name: Create comment
