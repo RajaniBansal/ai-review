@@ -5,14 +5,12 @@ import sys
 
 # Check if OPENAI_API_KEY present since it is mandatory
 if not os.environ.get("OPENAI_API_KEY"):
-    print("No OpenAI API key found")
+    print("Please provide OPEN AI access token")
     sys.exit(1)
 
 client = openai.OpenAI()
 
 model_engine = os.environ["MODEL"]
-commit_title = os.environ["COMMIT_TITLE"]
-commit_message = os.environ["COMMIT_BODY"]
 
 # Analyze the code changes with OpenAI
 code = sys.stdin.read()
