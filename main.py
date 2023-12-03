@@ -13,11 +13,11 @@ client = openai.OpenAI()
 model_engine = os.environ["MODEL"]
 commit_title = os.environ["COMMIT_TITLE"]
 commit_message = os.environ["COMMIT_BODY"]
+print('commit_title - ', commit_title)
+print('commit_message - ', commit_message)
 
 # Analyze the code changes with OpenAI
 code = sys.stdin.read()
-header = (f"Commit title is '{commit_title}'\n"
-          f"and commit message is '{commit_message}'\n")
 prompt = os.environ["PROMPT"] + "\nCode of commit is:\n```\n" + code + "\n```"
 
 kwargs = {'model': model_engine}
@@ -32,6 +32,6 @@ try:
     else:
         review_text = f"No correct answer from OpenAI!\n{response.text}"
 except Exception as e:
-    review_text = f"OpenAI failed to generate a review: {e}"
+    review_text = f"Open AI model has error: {e}"
 
 print(f"{review_text}")
