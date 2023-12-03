@@ -13,8 +13,6 @@ client = openai.OpenAI()
 model_engine = os.environ["MODEL"]
 commit_title = os.environ["COMMIT_TITLE"]
 commit_message = os.environ["COMMIT_BODY"]
-print('commit_title - ', commit_title)
-print('commit_message - ', commit_message)
 
 # Analyze the code changes with OpenAI
 code = sys.stdin.read()
