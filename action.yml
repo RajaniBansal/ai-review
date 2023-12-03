@@ -11,7 +11,7 @@ inputs:
   prompt:
     description: 'Pormpt will use to tell AI model what feedbacks needed for privided code'
     required: false
-    default: Please reivew the code and provide your feedbacks.
+    default: Please review the code and provide your feedbacks. Please assume that code is in Javascript.
   post-if-error:
     description: 'Whether to post a comment if there was an error'
     required: false
